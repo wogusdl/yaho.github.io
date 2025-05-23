@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub 이미지 뷰어</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: black;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    img {
+      max-width: 100%;
+      max-height: 80vh;
+      display: block;
+    }
+    #controls {
+      position: absolute;
+      bottom: 20px;
+    }
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="viewer"></div>
+  <div id="controls">
+    <button id="playBtn">▶ 재생</button>
+    <button id="pauseBtn" disabled>⏸ 일시정지</button>
+  </div>
+
+  <script>
+    const totalImages = 10;
+    const delay = 2000;
+    const baseUrl = "https://wogusdl.github.io/dc_prod_map";
+
+    let index = 1;
+    let isPlaying = false;
+    let timerId = null;
+
+    function showImage(num) {
+      const viewer = document.getElementById("viewer");
+      viewer.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = `${baseUrl}/image_${num}.jpg`;
+      img.alt = `image ${num}`;
+      viewer.appendChild(img);
+    }
+
+    function showSequence(upto, current = 1) {
+      if (!isPlaying) return;
+
+      showImage(current);
+
+      if (current < upto) {
+        timerId = setTimeout(() => showSequence(upto, current + 1), delay);
+      } else {
+        timerId = setTimeout(() => {
+          index = (index % totalImages) + 1;
+          showSequence(index);
+        }, delay);
+      }
+    }
+
+    function startSlideshow() {
+      if (isPlaying) return;
+      isPlaying = true;
+      document.getElementById("playBtn").disabled = true;
+      document.getElementById("pauseBtn").disabled = false;
+      showSequence(index);
+    }
+
+    function pauseSlideshow() {
+      isPlaying = false;
+      clearTimeout(timerId);
+      document.getElementById("playBtn").disabled = false;
+      document.getElementById("pauseBtn").disabled = true;
+    }
+
+    document.getElementById("playBtn").addEventListener("click", startSlideshow);
+    document.getElementById("pauseBtn").addEventListener("click", pauseSlideshow);
+  </script>
+</body>
+</html>
