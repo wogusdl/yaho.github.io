@@ -14,6 +14,10 @@
       align-items: center;
       height: 100vh;
     }
+    #viewer {
+      width: 100%;
+      height: 100%;
+    }
     img {
       max-width: 100%;
       max-height: 80vh;
@@ -48,7 +52,7 @@
     ];
 
     const totalImages = imageList.length;
-    const delay = 2000;  // 2초 간격
+    const delay = 2000;
 
     let index = 0;
     let isPlaying = false;
@@ -60,6 +64,9 @@
       const img = document.createElement("img");
       img.src = imageList[num];
       img.alt = `image ${num + 1}`;
+      img.onerror = () => {
+        console.error(`Failed to load image: ${img.src}`);
+      };
       viewer.appendChild(img);
     }
 
@@ -91,6 +98,15 @@
 
     document.getElementById("playBtn").addEventListener("click", startSlideshow);
     document.getElementById("pauseBtn").addEventListener("click", pauseSlideshow);
+
+    // ✅ 초기 테스트용: 첫 이미지 로드
+    window.addEventListener('load', () => {
+      if (totalImages > 0) {
+        showImage(index);
+      } else {
+        console.warn('No images in the list!');
+      }
+    });
   </script>
 </body>
 </html>
