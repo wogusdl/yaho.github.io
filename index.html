@@ -41,10 +41,18 @@
   </div>
 
   <script>
-    const totalImages = 10;
-    const delay = 2000;
+    // ✅ 여기에 실제 GitHub에 올라간 이미지 파일명을 정확히 써주세요
+    const imageList = [
+      '20181228_101532.jpg',
+      '20181228_101533.jpg',
+      '20181228_101534.jpg'
+      // 여기에 추가: '다른파일명.jpg', ...
+    ];
 
-    let index = 1;
+    const totalImages = imageList.length;
+    const delay = 2000;  // 2초 간격
+
+    let index = 0;
     let isPlaying = false;
     let timerId = null;
 
@@ -52,24 +60,20 @@
       const viewer = document.getElementById("viewer");
       viewer.innerHTML = "";
       const img = document.createElement("img");
-      img.src = `image_${num}.jpg`;  // 상대 경로로 수정
-      img.alt = `image ${num}`;
+      img.src = imageList[num];
+      img.alt = `image ${num + 1}`;
       viewer.appendChild(img);
     }
 
-    function showSequence(upto, current = 1) {
+    function showSequence(current = 0) {
       if (!isPlaying) return;
 
       showImage(current);
 
-      if (current < upto) {
-        timerId = setTimeout(() => showSequence(upto, current + 1), delay);
-      } else {
-        timerId = setTimeout(() => {
-          index = (index % totalImages) + 1;
-          showSequence(index);
-        }, delay);
-      }
+      timerId = setTimeout(() => {
+        index = (current + 1) % totalImages;
+        showSequence(index);
+      }, delay);
     }
 
     function startSlideshow() {
