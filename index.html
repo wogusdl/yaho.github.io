@@ -13,11 +13,22 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      color: white;
+      font-family: sans-serif;
+    }
+    #viewer {
+      text-align: center;
     }
     img {
       max-width: 100%;
       max-height: 80vh;
       display: block;
+      margin: 0 auto;
+    }
+    #filename {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #ccc;
     }
     #controls {
       position: absolute;
@@ -34,42 +45,56 @@
   </style>
 </head>
 <body>
-  <div id="viewer"></div>
+  <div id="viewer">
+    <div id="imageContainer"></div>
+    <div id="filename"></div>
+  </div>
   <div id="controls">
     <button id="playBtn">▶ 재생</button>
     <button id="pauseBtn" disabled>⏸ 일시정지</button>
   </div>
 
   <script>
-    const totalImages = 10;
+    const imageList = [
+      '20181228_101532.jpg',
+      '20181228_101533.jpg',
+      '20181228_101534.jpg'
+    ];
+
+    const totalImages = imageList.length;
     const delay = 2000;
 
-    let index = 1;
+    let index = 0;
     let isPlaying = false;
     let timerId = null;
 
     function showImage(num) {
-      const viewer = document.getElementById("viewer");
-      viewer.innerHTML = "";
+      const imageContainer = document.getElementById("imageContainer");
+      const filenameDisplay = document.getElementById("filename");
+      
+      imageContainer.innerHTML = "";
+      
       const img = document.createElement("img");
-      img.src = `image_${num}.jpg`;  // 상대 경로로 수정
-      img.alt = `image ${num}`;
-      viewer.appendChild(img);
+      img.src = imageList[num];
+      img.alt = `image ${num + 1}`;
+      img.onerror = () => {
+        console.error(`Failed to load image: ${img.src}`);
+        filenameDisplay.textContent = `⚠️ Failed to load: ${img.src}`;
+      };
+      
+      imageContainer.appendChild(img);
+      filenameDisplay.textContent = `현재 이미지: ${img.src}`;
     }
 
-    function showSequence(upto, current = 1) {
+    function showSequence(current = 0) {
       if (!isPlaying) return;
 
       showImage(current);
 
-      if (current < upto) {
-        timerId = setTimeout(() => showSequence(upto, current + 1), delay);
-      } else {
-        timerId = setTimeout(() => {
-          index = (index % totalImages) + 1;
-          showSequence(index);
-        }, delay);
-      }
+      timerId = setTimeout(() => {
+        index = (current + 1) % totalImages;
+        showSequence(index);
+      }, delay);
     }
 
     function startSlideshow() {
@@ -89,6 +114,14 @@
 
     document.getElementById("playBtn").addEventListener("click", startSlideshow);
     document.getElementById("pauseBtn").addEventListener("click", pauseSlideshow);
+
+    window.addEventListener('load', () => {
+      if (totalImages > 0) {
+        showImage(index);
+      } else {
+        document.getElementById("filename").textContent = '⚠️ 이미지 목록이 비어 있습니다!';
+      }
+    });
   </script>
 </body>
 </html>
