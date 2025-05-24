@@ -43,7 +43,6 @@
   <script>
     const totalImages = 10;
     const delay = 2000;
-    const baseUrl = "https://wogusdl.github.io/yaho.github.io";
 
     let index = 1;
     let isPlaying = false;
@@ -53,7 +52,7 @@
       const viewer = document.getElementById("viewer");
       viewer.innerHTML = "";
       const img = document.createElement("img");
-      img.src = `${baseUrl}/image_${num}.jpg`;
+      img.src = `image_${num}.jpg`;  // 상대 경로로 수정
       img.alt = `image ${num}`;
       viewer.appendChild(img);
     }
